@@ -27,7 +27,7 @@ const profile2 = {
     name: "tool",
     age: 20
 };
-amqp.connect('amqp://localhost', (connError, connection) => {
+amqp.connect('amqp://rabbitmq', (connError, connection) => {
     if (connError) {
         throw connError;
     }

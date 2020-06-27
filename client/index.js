@@ -14,10 +14,10 @@ const mess = {
 // Step1 : Create Connection
 app.get('/get', (req, res) => {
     var result = [];
-    amqp.connect('amqp://localhost', (connError, connection) => {
-        if (connError) {
-            throw connError;
-        }
+    amqp.connect('amqp://rabbitmq', (connError, connection) => {
+        // if (connError) {
+        //     throw connError;
+        // }
         //Step 2: Create  Channel
         connection.createChannel((channelError, channel) => {
 
@@ -40,12 +40,13 @@ app.get('/get', (req, res) => {
                 channel.ack(msg);
                 console.log(JSON.parse(msg.content));
                 result = msg.content;
+                res.json(msg.content);
             });
         })
 
 
     })
-    res.json(result);
+   
 })
 
-app.listen(PORT, () => console.log(`Client is running on${PORT}`));
+app.listen(PORT, () => console.log(`Client is running on ${PORT}`));
