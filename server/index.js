@@ -9,7 +9,7 @@ require('dotenv/config');
 const PORT = 8000;
 
 //connect db
-const db = process.env.DATABASE;
+const db = 'mongodb://mongodb:27017/news-vietnamnet';
 
 mongoose.connect(db, {
     useNewUrlParser: true,
@@ -37,10 +37,10 @@ amqp.connect('amqp://rabbitmq', (connError, connection) => {
 
         const QUEUE_IN = 'input';
         const QUEUE_OUT = 'output';
-        channel.assertQueue(QUEUE_IN);
-        channel.assertQueue(QUEUE_OUT);
+        channel.assertQueue('input');
+        channel.assertQueue('output');
         // step 4: reiceve messages
-        channel.consume(QUEUE_IN, async (msg) => {
+        channel.consume('input', async (msg) => {
             channel.ack(msg);
             console.log(`Message receive: ${msg.content}`)
             const mess = JSON.parse(msg.content);
@@ -59,7 +59,7 @@ amqp.connect('amqp://rabbitmq', (connError, connection) => {
                 const res = await getByWeb(mess.data);
                 console.log("===============================");
                 console.log(res);
-                channel.sendToQueue(QUEUE_OUT, Buffer.from(JSON.stringify(res)));
+                channel.sendToQueue('output', Buffer.from(JSON.stringify(res)));
 
             }
             //  channel.ack(msg);

@@ -3,37 +3,35 @@ services:
     server:
         container_name: rabbitmq-server
         restart: always
-        build: server/
+        build: ./server
         ports:
             - '8000:8000'
         links: 
-            - mongo
+            - mongodb
             - rabbitmq
         depends_on: 
-            - mongo
+            - mongodb
             - rabbitmq
-        environment:
-            - MESSAGE_QUEUE=amqp://rabbitmq            
-    mongo:
-        container_name: mongo
+                  
+    mongodb:
+        container_name: mongodb
         image: mongo
+        volumes: 
+            - ./mongodb:/data/db
         ports: 
             - "27018:27017"
     rabbitmq:
         container_name: rabbitmq
         image: "rabbitmq"
-        ports:
-            - "5673:5672"
-            - "15673:15672"
+
     client:
         container_name: rabbitmq-client
-        build: client/
+        build: ./client
         restart: always
-        network_mode: host
         ports: 
             - '3000:3000'
         depends_on: 
             - server
-        environment:
-            - MESSAGE_QUEUE=amqp://rabbitmq            
-       
+volumes:
+    mongodb:
+
